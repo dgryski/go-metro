@@ -2,6 +2,10 @@ package metro
 
 import "encoding/binary"
 
+func rotate_right(v uint64, k uint) uint64 {
+	return (v >> k) | (v << (64 - k))
+}
+
 func Hash128(buffer []byte, seed uint64) (uint64, uint64) {
 
 	const (

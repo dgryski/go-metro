@@ -1,10 +1,8 @@
+// +build !amd64
+
 package metro
 
 import "encoding/binary"
-
-func rotate_right(v uint64, k uint) uint64 {
-	return (v >> k) | (v << (64 - k))
-}
 
 func Hash64(buffer []byte, seed uint64) uint64 {
 
