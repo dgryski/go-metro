@@ -1,11 +1,9 @@
 This package is a mechanical translation of the reference C++ code for
 MetroHash, available at https://github.com/jandrewrogers/MetroHash 
 
-I claim no additional copyright over the original implementation.
-
 The MIT License (MIT)
 
-Copyright (c) 2015 J. Andrew Rogers
+Copyright (c) 2016 Damian Gryski
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
