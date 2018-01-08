@@ -1,4 +1,4 @@
-// +build !amd64
+// +build noasm !amd64
 
 package metro
 
