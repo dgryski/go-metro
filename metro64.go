@@ -40,31 +40,30 @@ func Hash64(buffer []byte, seed uint64) uint64 {
 	}
 
 	if len(ptr) >= 16 {
-		v0 := hash + (binary.LittleEndian.Uint64(ptr) * k2)
-		ptr = ptr[8:]
+		v0 := hash + (binary.LittleEndian.Uint64(ptr[:8]) * k2)
 		v0 = rotate_right(v0, 29) * k3
-		v1 := hash + (binary.LittleEndian.Uint64(ptr) * k2)
-		ptr = ptr[8:]
+		v1 := hash + (binary.LittleEndian.Uint64(ptr[8:16]) * k2)
 		v1 = rotate_right(v1, 29) * k3
 		v0 ^= rotate_right(v0*k0, 21) + v1
 		v1 ^= rotate_right(v1*k3, 21) + v0
 		hash += v1
+		ptr = ptr[16:]
 	}
 
 	if len(ptr) >= 8 {
-		hash += binary.LittleEndian.Uint64(ptr) * k3
+		hash += binary.LittleEndian.Uint64(ptr[:8]) * k3
 		ptr = ptr[8:]
 		hash ^= rotate_right(hash, 55) * k1
 	}
 
 	if len(ptr) >= 4 {
-		hash += uint64(binary.LittleEndian.Uint32(ptr)) * k3
-		ptr = ptr[4:]
+		hash += uint64(binary.LittleEndian.Uint32(ptr[:4])) * k3
 		hash ^= rotate_right(hash, 26) * k1
+		ptr = ptr[4:]
 	}
 
 	if len(ptr) >= 2 {
-		hash += uint64(binary.LittleEndian.Uint16(ptr)) * k3
+		hash += uint64(binary.LittleEndian.Uint16(ptr[:2])) * k3
 		ptr = ptr[2:]
 		hash ^= rotate_right(hash, 48) * k1
 	}
