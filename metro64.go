@@ -18,25 +18,25 @@ func Hash64(buffer []byte, seed uint64) uint64 {
 	hash := (seed + k2) * k0
 
 	if len(ptr) >= 32 {
-		v := [4]uint64{hash, hash, hash, hash}
+		v0, v1, v2, v3 := hash, hash, hash, hash
 
 		for len(ptr) >= 32 {
-			v[0] += binary.LittleEndian.Uint64(ptr[:8]) * k0
-			v[0] = rotate_right(v[0], 29) + v[2]
-			v[1] += binary.LittleEndian.Uint64(ptr[8:16]) * k1
-			v[1] = rotate_right(v[1], 29) + v[3]
-			v[2] += binary.LittleEndian.Uint64(ptr[16:24]) * k2
-			v[2] = rotate_right(v[2], 29) + v[0]
-			v[3] += binary.LittleEndian.Uint64(ptr[24:32]) * k3
-			v[3] = rotate_right(v[3], 29) + v[1]
+			v0 += binary.LittleEndian.Uint64(ptr[:8]) * k0
+			v0 = rotate_right(v0, 29) + v2
+			v1 += binary.LittleEndian.Uint64(ptr[8:16]) * k1
+			v1 = rotate_right(v1, 29) + v3
+			v2 += binary.LittleEndian.Uint64(ptr[16:24]) * k2
+			v2 = rotate_right(v2, 29) + v0
+			v3 += binary.LittleEndian.Uint64(ptr[24:32]) * k3
+			v3 = rotate_right(v3, 29) + v1
 			ptr = ptr[32:]
 		}
 
-		v[2] ^= rotate_right(((v[0]+v[3])*k0)+v[1], 37) * k1
-		v[3] ^= rotate_right(((v[1]+v[2])*k1)+v[0], 37) * k0
-		v[0] ^= rotate_right(((v[0]+v[2])*k0)+v[3], 37) * k1
-		v[1] ^= rotate_right(((v[1]+v[3])*k1)+v[2], 37) * k0
-		hash += v[0] ^ v[1]
+		v2 ^= rotate_right(((v0+v3)*k0)+v1, 37) * k1
+		v3 ^= rotate_right(((v1+v2)*k1)+v0, 37) * k0
+		v0 ^= rotate_right(((v0+v2)*k0)+v3, 37) * k1
+		v1 ^= rotate_right(((v1+v3)*k1)+v2, 37) * k0
+		hash += v0 ^ v1
 	}
 
 	if len(ptr) >= 16 {
