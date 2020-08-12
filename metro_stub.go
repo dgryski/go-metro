@@ -1,5 +1,5 @@
 // +build !noasm,amd64
-// +build !gccgo
+// +build gc
 
 package metro
 
