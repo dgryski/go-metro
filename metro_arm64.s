@@ -26,23 +26,19 @@ TEXT ·Hash64(SB), NOSPLIT, $0-40
 
 loop:
 	MOVD (R1), R12
-	MUL  R3, R12, R12
-	ADD  R12, R8, R8
+	MADD R3, R8, R12, R8
 	ROR  $0x1d, R8, R8
 	ADD  R10, R8, R8
 	MOVD 8(R1), R12
-	MUL  R5, R12, R12
-	ADD  R12, R9, R9
+	MADD R5, R9, R12, R9
 	ROR  $0x1d, R9, R9
 	ADD  R11, R9, R9
 	MOVD 16(R1), R12
-	MUL  R6, R12, R12
-	ADD  R12, R10, R10
+	MADD R6, R10, R12, R10
 	ROR  $0x1d, R10, R10
 	ADD  R8, R10, R10
 	MOVD 24(R1), R12
-	MUL  R7, R12, R12
-	ADD  R12, R11, R11
+	MADD R7, R11, R12, R11
 	ROR  $0x1d, R11, R11
 	ADD  R9, R11, R11
 	ADD  $0x20, R1, R1
@@ -51,29 +47,25 @@ loop:
 	BGE  loop
 	MOVD R8, R12
 	ADD  R11, R12, R12
-	MUL  R3, R12, R12
-	ADD  R9, R12, R12
+	MADD R3, R9, R12, R12
 	ROR  $0x25, R12, R12
 	MUL  R5, R12, R12
 	EOR  R12, R10, R10
 	MOVD R9, R12
 	ADD  R10, R12, R12
-	MUL  R5, R12, R12
-	ADD  R8, R12, R12
+	MADD R5, R8, R12, R12
 	ROR  $0x25, R12, R12
 	MUL  R3, R12, R12
 	EOR  R12, R11, R11
 	MOVD R8, R12
 	ADD  R10, R12, R12
-	MUL  R3, R12, R12
-	ADD  R11, R12, R12
+	MADD R3, R11, R12, R12
 	ROR  $0x25, R12, R12
 	MUL  R5, R12, R12
 	EOR  R12, R8, R8
 	MOVD R9, R12
 	ADD  R11, R12, R12
-	MUL  R5, R12, R12
-	ADD  R10, R12, R12
+	MADD R5, R10, R12, R12
 	ROR  $0x25, R12, R12
 	MUL  R3, R12, R12
 	EOR  R12, R9, R9
@@ -84,12 +76,10 @@ after32:
 	CMP  $0x10, R2
 	BLT  after16
 	MOVD (R1), R8
-	MUL  R6, R8, R8
-	ADD  R0, R8, R8
+	MADD R6, R0, R8, R8
 	ROR  $0x1d, R8, R8
 	MOVD 8(R1), R9
-	MUL  R6, R9, R9
-	ADD  R0, R9, R9
+	MADD R6, R0, R9, R9
 	ROR  $0x1d, R9, R9
 	ADD  $0x10, R1, R1
 	SUB  $0x10, R2, R2
@@ -111,8 +101,7 @@ after16:
 	CMP  $0x08, R2
 	BLT  after8
 	MOVD (R1), R6
-	MUL  R7, R6, R6
-	ADD  R6, R0, R0
+	MADD R7, R0, R6, R0
 	ADD  $0x08, R1, R1
 	SUB  $0x08, R2, R2
 	ROR  $0x37, R0, R6
@@ -123,8 +112,7 @@ after8:
 	CMP   $0x04, R2
 	BLT   after4
 	MOVWU (R1), R6
-	MUL   R7, R6, R6
-	ADD   R6, R0, R0
+	MADD  R7, R0, R6, R0
 	ADD   $0x04, R1, R1
 	SUB   $0x04, R2, R2
 	ROR   $0x1a, R0, R6
@@ -135,8 +123,7 @@ after4:
 	CMP   $0x02, R2
 	BLT   after2
 	MOVHU (R1), R6
-	MUL   R7, R6, R6
-	ADD   R6, R0, R0
+	MADD  R7, R0, R6, R0
 	ADD   $0x02, R1, R1
 	SUB   $0x02, R2, R2
 	ROR   $0x30, R0, R6
@@ -147,8 +134,7 @@ after2:
 	CMP   $0x01, R2
 	BLT   after1
 	MOVBU (R1), R1
-	MUL   R7, R1, R1
-	ADD   R1, R0, R0
+	MADD  R7, R0, R1, R0
 	ROR   $0x25, R0, R1
 	MUL   R5, R1, R1
 	EOR   R1, R0, R0
@@ -183,23 +169,19 @@ TEXT ·Hash64Str(SB), NOSPLIT, $0-32
 
 loop:
 	MOVD (R1), R12
-	MUL  R3, R12, R12
-	ADD  R12, R8, R8
+	MADD R3, R8, R12, R8
 	ROR  $0x1d, R8, R8
 	ADD  R10, R8, R8
 	MOVD 8(R1), R12
-	MUL  R5, R12, R12
-	ADD  R12, R9, R9
+	MADD R5, R9, R12, R9
 	ROR  $0x1d, R9, R9
 	ADD  R11, R9, R9
 	MOVD 16(R1), R12
-	MUL  R6, R12, R12
-	ADD  R12, R10, R10
+	MADD R6, R10, R12, R10
 	ROR  $0x1d, R10, R10
 	ADD  R8, R10, R10
 	MOVD 24(R1), R12
-	MUL  R7, R12, R12
-	ADD  R12, R11, R11
+	MADD R7, R11, R12, R11
 	ROR  $0x1d, R11, R11
 	ADD  R9, R11, R11
 	ADD  $0x20, R1, R1
@@ -208,29 +190,25 @@ loop:
 	BGE  loop
 	MOVD R8, R12
 	ADD  R11, R12, R12
-	MUL  R3, R12, R12
-	ADD  R9, R12, R12
+	MADD R3, R9, R12, R12
 	ROR  $0x25, R12, R12
 	MUL  R5, R12, R12
 	EOR  R12, R10, R10
 	MOVD R9, R12
 	ADD  R10, R12, R12
-	MUL  R5, R12, R12
-	ADD  R8, R12, R12
+	MADD R5, R8, R12, R12
 	ROR  $0x25, R12, R12
 	MUL  R3, R12, R12
 	EOR  R12, R11, R11
 	MOVD R8, R12
 	ADD  R10, R12, R12
-	MUL  R3, R12, R12
-	ADD  R11, R12, R12
+	MADD R3, R11, R12, R12
 	ROR  $0x25, R12, R12
 	MUL  R5, R12, R12
 	EOR  R12, R8, R8
 	MOVD R9, R12
 	ADD  R11, R12, R12
-	MUL  R5, R12, R12
-	ADD  R10, R12, R12
+	MADD R5, R10, R12, R12
 	ROR  $0x25, R12, R12
 	MUL  R3, R12, R12
 	EOR  R12, R9, R9
@@ -241,12 +219,10 @@ after32:
 	CMP  $0x10, R2
 	BLT  after16
 	MOVD (R1), R8
-	MUL  R6, R8, R8
-	ADD  R0, R8, R8
+	MADD R6, R0, R8, R8
 	ROR  $0x1d, R8, R8
 	MOVD 8(R1), R9
-	MUL  R6, R9, R9
-	ADD  R0, R9, R9
+	MADD R6, R0, R9, R9
 	ROR  $0x1d, R9, R9
 	ADD  $0x10, R1, R1
 	SUB  $0x10, R2, R2
@@ -268,8 +244,7 @@ after16:
 	CMP  $0x08, R2
 	BLT  after8
 	MOVD (R1), R6
-	MUL  R7, R6, R6
-	ADD  R6, R0, R0
+	MADD R7, R0, R6, R0
 	ADD  $0x08, R1, R1
 	SUB  $0x08, R2, R2
 	ROR  $0x37, R0, R6
@@ -280,8 +255,7 @@ after8:
 	CMP   $0x04, R2
 	BLT   after4
 	MOVWU (R1), R6
-	MUL   R7, R6, R6
-	ADD   R6, R0, R0
+	MADD  R7, R0, R6, R0
 	ADD   $0x04, R1, R1
 	SUB   $0x04, R2, R2
 	ROR   $0x1a, R0, R6
@@ -292,8 +266,7 @@ after4:
 	CMP   $0x02, R2
 	BLT   after2
 	MOVHU (R1), R6
-	MUL   R7, R6, R6
-	ADD   R6, R0, R0
+	MADD  R7, R0, R6, R0
 	ADD   $0x02, R1, R1
 	SUB   $0x02, R2, R2
 	ROR   $0x30, R0, R6
@@ -304,8 +277,7 @@ after2:
 	CMP   $0x01, R2
 	BLT   after1
 	MOVBU (R1), R1
-	MUL   R7, R1, R1
-	ADD   R1, R0, R0
+	MADD  R7, R0, R1, R0
 	ROR   $0x25, R0, R1
 	MUL   R5, R1, R1
 	EOR   R1, R0, R0
