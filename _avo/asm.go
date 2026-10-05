@@ -18,29 +18,40 @@ func advance(p, l Op, c uint64) {
 	SUBQ(Imm(c), l)
 }
 
-func imul(k Constant, r Op) {
-	t := GP64()
-	MOVQ(k, t)
-	IMULQ(t, r)
+// keys holds k0..k3, materialized once per function by loadKeys. Neither
+// architecture can multiply by a 64-bit immediate, so re-materializing a key at
+// every multiply costs an extra instruction (two on arm64) each time.
+var keys map[uint64]GPVirtual
+
+func loadKeys() {
+	keys = map[uint64]GPVirtual{}
+	for _, k := range []uint64{k0, k1, k2, k3} {
+		keys[k] = GP64()
+		MOVQ(U64(k), keys[k])
+	}
+}
+
+func imul(k uint64, r Op) {
+	IMULQ(keys[k], r)
 }
 
 func update32(v, p Register, idx uint64, k uint64, vadd Op) {
 	r := GP64()
 	MOVQ(Mem{Base: p, Disp: int(idx)}, r)
-	imul(Imm(k), r)
+	imul(k, r)
 	ADDQ(r, v)
 	RORQ(Imm(29), v)
 	ADDQ(vadd, v)
 }
 
-func final32(v []GPVirtual, regs []int, keys []uint64) {
+func final32(v []GPVirtual, regs []int, ks []uint64) {
 	r := GP64()
 	MOVQ(v[regs[1]], r)
 	ADDQ(v[regs[2]], r)
-	imul(Imm(keys[0]), r)
+	imul(ks[0], r)
 	ADDQ(v[regs[3]], r)
 	RORQ(Imm(37), r)
-	imul(Imm(keys[1]), r)
+	imul(ks[1], r)
 	XORQ(r, v[regs[0]])
 }
 
@@ -48,8 +59,9 @@ func makeHash64() {
 	hash := Load(Param("seed"), GP64())
 	buffer := Load(Param("buffer").Base(), GP64())
 	bufferLength := Load(Param("buffer").Len(), GP64())
+	loadKeys()
 
-	imul(Imm(k0), hash)
+	imul(k0, hash)
 	r := GP64()
 	MOVQ(Imm(k2*k0), r)
 	ADDQ(r, hash)
@@ -88,24 +100,24 @@ func makeHash64() {
 
 	for i := range 2 {
 		MOVQ(Mem{Base: buffer}, v[i])
-		imul(Imm(k2), v[i])
+		imul(k2, v[i])
 		ADDQ(hash, v[i])
 
 		advance(buffer, bufferLength, 8)
 
 		RORQ(Imm(29), v[i])
-		imul(Imm(k3), v[i])
+		imul(k3, v[i])
 	}
 
 	r = GP64()
 	MOVQ(v[0], r)
-	imul(Imm(k0), r)
+	imul(k0, r)
 	RORQ(Imm(21), r)
 	ADDQ(v[1], r)
 	XORQ(r, v[0])
 
 	MOVQ(v[1], r)
-	imul(Imm(k3), r)
+	imul(k3, r)
 	RORQ(Imm(21), r)
 	ADDQ(v[0], r)
 	XORQ(r, v[1])
@@ -119,13 +131,13 @@ func makeHash64() {
 
 	r = GP64()
 	MOVQ(Mem{Base: buffer}, r)
-	imul(Imm(k3), r)
+	imul(k3, r)
 	ADDQ(r, hash)
 	advance(buffer, bufferLength, 8)
 
 	MOVQ(hash, r)
 	RORQ(Imm(55), r)
-	imul(Imm(k1), r)
+	imul(k1, r)
 	XORQ(r, hash)
 
 	Label("after8")
@@ -136,13 +148,13 @@ func makeHash64() {
 	r = GP64()
 	XORQ(r, r)
 	MOVL(Mem{Base: buffer}, r.As32())
-	imul(Imm(k3), r)
+	imul(k3, r)
 	ADDQ(r, hash)
 	advance(buffer, bufferLength, 4)
 
 	MOVQ(hash, r)
 	RORQ(Imm(26), r)
-	imul(Imm(k1), r)
+	imul(k1, r)
 	XORQ(r, hash)
 
 	Label("after4")
@@ -153,13 +165,13 @@ func makeHash64() {
 	r = GP64()
 	XORQ(r, r)
 	MOVW(Mem{Base: buffer}, r.As16())
-	imul(Imm(k3), r)
+	imul(k3, r)
 	ADDQ(r, hash)
 	advance(buffer, bufferLength, 2)
 
 	MOVQ(hash, r)
 	RORQ(Imm(48), r)
-	imul(Imm(k1), r)
+	imul(k1, r)
 	XORQ(r, hash)
 
 	Label("after2")
@@ -169,12 +181,12 @@ func makeHash64() {
 
 	r = GP64()
 	MOVBQZX(Mem{Base: buffer}, r)
-	imul(Imm(k3), r)
+	imul(k3, r)
 	ADDQ(r, hash)
 
 	MOVQ(hash, r)
 	RORQ(Imm(37), r)
-	imul(Imm(k1), r)
+	imul(k1, r)
 	XORQ(r, hash)
 
 	Label("after1")
@@ -184,7 +196,7 @@ func makeHash64() {
 	RORQ(Imm(28), r)
 	XORQ(r, hash)
 
-	imul(Imm(k0), hash)
+	imul(k0, hash)
 
 	MOVQ(hash, r)
 	RORQ(Imm(29), r)
