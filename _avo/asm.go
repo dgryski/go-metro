@@ -99,28 +99,32 @@ func makeHash64() {
 	JLT(LabelRef("after16"))
 
 	for i := range 2 {
-		MOVQ(Mem{Base: buffer}, v[i])
+		MOVQ(Mem{Base: buffer, Disp: 8 * i}, v[i])
 		imul(k2, v[i])
 		ADDQ(hash, v[i])
-
-		advance(buffer, bufferLength, 8)
-
 		RORQ(Imm(29), v[i])
-		imul(k3, v[i])
 	}
+	advance(buffer, bufferLength, 16)
 
-	r = GP64()
-	MOVQ(v[0], r)
-	imul(k0, r)
-	RORQ(Imm(21), r)
-	ADDQ(v[1], r)
-	XORQ(r, v[0])
+	// Each v[i] is about to be multiplied by k3, and the mixing below then
+	// multiplies v[0] by k0 and v[1] by k3 again. Multiplying the rotated
+	// values by the folded keys k3*k0 and k3*k3 instead runs those products
+	// alongside the k3 ones rather than after them.
+	m0, m1 := GP64(), GP64()
+	MOVQ(U64(k3*k0), m0)
+	IMULQ(v[0], m0)
+	MOVQ(U64(k3*k3), m1)
+	IMULQ(v[1], m1)
+	imul(k3, v[0])
+	imul(k3, v[1])
 
-	MOVQ(v[1], r)
-	imul(k3, r)
-	RORQ(Imm(21), r)
-	ADDQ(v[0], r)
-	XORQ(r, v[1])
+	RORQ(Imm(21), m0)
+	ADDQ(v[1], m0)
+	XORQ(m0, v[0])
+
+	RORQ(Imm(21), m1)
+	ADDQ(v[0], m1)
+	XORQ(m1, v[1])
 
 	ADDQ(v[1], hash)
 

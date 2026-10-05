@@ -86,27 +86,25 @@ after32:
 	MOVD (R1), R8
 	MUL  R6, R8, R8
 	ADD  R0, R8, R8
-	ADD  $0x08, R1, R1
-	SUB  $0x08, R2, R2
 	ROR  $0x1d, R8, R8
-	MUL  R7, R8, R8
-	MOVD (R1), R9
+	MOVD 8(R1), R9
 	MUL  R6, R9, R9
 	ADD  R0, R9, R9
-	ADD  $0x08, R1, R1
-	SUB  $0x08, R2, R2
 	ROR  $0x1d, R9, R9
+	ADD  $0x10, R1, R1
+	SUB  $0x10, R2, R2
+	MOVD $0x28e511fea41f163d, R6
+	MUL  R8, R6, R6
+	MOVD $0x09472cc564ae2c91, R10
+	MUL  R9, R10, R10
+	MUL  R7, R8, R8
 	MUL  R7, R9, R9
-	MOVD R8, R6
-	MUL  R3, R6, R6
 	ROR  $0x15, R6, R6
 	ADD  R9, R6, R6
 	EOR  R6, R8, R8
-	MOVD R9, R6
-	MUL  R7, R6, R6
-	ROR  $0x15, R6, R6
-	ADD  R8, R6, R6
-	EOR  R6, R9, R9
+	ROR  $0x15, R10, R10
+	ADD  R8, R10, R10
+	EOR  R10, R9, R9
 	ADD  R9, R0, R0
 
 after16:
@@ -248,27 +246,25 @@ after32:
 	MOVD (R1), R8
 	MUL  R6, R8, R8
 	ADD  R0, R8, R8
-	ADD  $0x08, R1, R1
-	SUB  $0x08, R2, R2
 	ROR  $0x1d, R8, R8
-	MUL  R7, R8, R8
-	MOVD (R1), R9
+	MOVD 8(R1), R9
 	MUL  R6, R9, R9
 	ADD  R0, R9, R9
-	ADD  $0x08, R1, R1
-	SUB  $0x08, R2, R2
 	ROR  $0x1d, R9, R9
+	ADD  $0x10, R1, R1
+	SUB  $0x10, R2, R2
+	MOVD $0x28e511fea41f163d, R6
+	MUL  R8, R6, R6
+	MOVD $0x09472cc564ae2c91, R10
+	MUL  R9, R10, R10
+	MUL  R7, R8, R8
 	MUL  R7, R9, R9
-	MOVD R8, R6
-	MUL  R3, R6, R6
 	ROR  $0x15, R6, R6
 	ADD  R9, R6, R6
 	EOR  R6, R8, R8
-	MOVD R9, R6
-	MUL  R7, R6, R6
-	ROR  $0x15, R6, R6
-	ADD  R8, R6, R6
-	EOR  R6, R9, R9
+	ROR  $0x15, R10, R10
+	ADD  R8, R10, R10
+	EOR  R10, R9, R9
 	ADD  R9, R0, R0
 
 after16:
