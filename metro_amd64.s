@@ -122,7 +122,6 @@ after16:
 after8:
 	CMPQ  DX, $0x04
 	JLT   after4
-	XORQ  DI, DI
 	MOVL  (CX), DI
 	IMULQ R8, DI
 	ADDQ  DI, AX
@@ -134,18 +133,17 @@ after8:
 	XORQ  DI, AX
 
 after4:
-	CMPQ  DX, $0x02
-	JLT   after2
-	XORQ  DI, DI
-	MOVW  (CX), DI
-	IMULQ R8, DI
-	ADDQ  DI, AX
-	ADDQ  $0x02, CX
-	SUBQ  $0x02, DX
-	MOVQ  AX, DI
-	RORQ  $0x30, DI
-	IMULQ SI, DI
-	XORQ  DI, AX
+	CMPQ    DX, $0x02
+	JLT     after2
+	MOVWQZX (CX), DI
+	IMULQ   R8, DI
+	ADDQ    DI, AX
+	ADDQ    $0x02, CX
+	SUBQ    $0x02, DX
+	MOVQ    AX, DI
+	RORQ    $0x30, DI
+	IMULQ   SI, DI
+	XORQ    DI, AX
 
 after2:
 	CMPQ    DX, $0x01
@@ -287,7 +285,6 @@ after16:
 after8:
 	CMPQ  DX, $0x04
 	JLT   after4
-	XORQ  DI, DI
 	MOVL  (CX), DI
 	IMULQ R8, DI
 	ADDQ  DI, AX
@@ -299,18 +296,17 @@ after8:
 	XORQ  DI, AX
 
 after4:
-	CMPQ  DX, $0x02
-	JLT   after2
-	XORQ  DI, DI
-	MOVW  (CX), DI
-	IMULQ R8, DI
-	ADDQ  DI, AX
-	ADDQ  $0x02, CX
-	SUBQ  $0x02, DX
-	MOVQ  AX, DI
-	RORQ  $0x30, DI
-	IMULQ SI, DI
-	XORQ  DI, AX
+	CMPQ    DX, $0x02
+	JLT     after2
+	MOVWQZX (CX), DI
+	IMULQ   R8, DI
+	ADDQ    DI, AX
+	ADDQ    $0x02, CX
+	SUBQ    $0x02, DX
+	MOVQ    AX, DI
+	RORQ    $0x30, DI
+	IMULQ   SI, DI
+	XORQ    DI, AX
 
 after2:
 	CMPQ    DX, $0x01

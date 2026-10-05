@@ -150,8 +150,7 @@ func makeHash64() {
 	JLT(LabelRef("after4"))
 
 	r = GP64()
-	XORQ(r, r)
-	MOVL(Mem{Base: buffer}, r.As32())
+	MOVL(Mem{Base: buffer}, r.As32()) // zero-extends: no need to clear r first
 	imul(k3, r)
 	ADDQ(r, hash)
 	advance(buffer, bufferLength, 4)
@@ -167,8 +166,7 @@ func makeHash64() {
 	JLT(LabelRef("after2"))
 
 	r = GP64()
-	XORQ(r, r)
-	MOVW(Mem{Base: buffer}, r.As16())
+	MOVWQZX(Mem{Base: buffer}, r)
 	imul(k3, r)
 	ADDQ(r, hash)
 	advance(buffer, bufferLength, 2)

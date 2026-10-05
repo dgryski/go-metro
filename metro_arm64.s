@@ -122,7 +122,6 @@ after16:
 after8:
 	CMP   $0x04, R2
 	BLT   after4
-	MOVD  $0, R6
 	MOVWU (R1), R6
 	MUL   R7, R6, R6
 	ADD   R6, R0, R0
@@ -135,9 +134,7 @@ after8:
 after4:
 	CMP   $0x02, R2
 	BLT   after2
-	MOVD  $0, R6
-	MOVHU (R1), R16
-	BFI   $0, R16, $16, R6
+	MOVHU (R1), R6
 	MUL   R7, R6, R6
 	ADD   R6, R0, R0
 	ADD   $0x02, R1, R1
@@ -282,7 +279,6 @@ after16:
 after8:
 	CMP   $0x04, R2
 	BLT   after4
-	MOVD  $0, R6
 	MOVWU (R1), R6
 	MUL   R7, R6, R6
 	ADD   R6, R0, R0
@@ -295,9 +291,7 @@ after8:
 after4:
 	CMP   $0x02, R2
 	BLT   after2
-	MOVD  $0, R6
-	MOVHU (R1), R16
-	BFI   $0, R16, $16, R6
+	MOVHU (R1), R6
 	MUL   R7, R6, R6
 	ADD   R6, R0, R0
 	ADD   $0x02, R1, R1
