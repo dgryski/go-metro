@@ -1,12 +1,9 @@
-//go:build ignore
-
 package main
 
 import (
-	. "github.com/mmcloughlin/avo/build"
-	"github.com/mmcloughlin/avo/buildtags"
-	. "github.com/mmcloughlin/avo/operand"
-	. "github.com/mmcloughlin/avo/reg"
+	. "github.com/honeycombio/avo/build"
+	. "github.com/honeycombio/avo/operand"
+	. "github.com/honeycombio/avo/reg"
 )
 
 const (
@@ -198,14 +195,7 @@ func makeHash64() {
 }
 
 func main() {
-	Constraints(
-		buildtags.And(
-			buildtags.Term("amd64"),
-			buildtags.Term("gc"),
-			buildtags.Not("purego"),
-			buildtags.Not("noasm"),
-		),
-	)
+	ConstraintExpr("amd64,gc,!purego,!noasm arm64,gc,!purego,!noasm")
 
 	TEXT("Hash64", NOSPLIT, "func(buffer []byte, seed uint64) uint64")
 	Pragma("noescape")
