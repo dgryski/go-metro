@@ -1,13 +1,14 @@
-//go:build noasm || !(amd64 || arm64) || !gc || purego
-
 package metro
 
 import (
 	"encoding/binary"
 	"math/bits"
+	"math/rand/v2"
+	"strconv"
+	"testing"
 )
 
-func Hash64(buffer []byte, seed uint64) uint64 {
+func refHash64(buffer []byte, seed uint64) uint64 {
 
 	const (
 		k0 = 0xD6D018F5
@@ -83,6 +84,57 @@ func Hash64(buffer []byte, seed uint64) uint64 {
 	return hash
 }
 
-func Hash64Str(buffer string, seed uint64) uint64 {
-	return Hash64([]byte(buffer), seed)
+func TestHash64MatchesReference(t *testing.T) {
+	rng := rand.New(rand.NewPCG(1, 2))
+	buf := make([]byte, 4096+8)
+	for i := range buf {
+		buf[i] = byte(rng.Uint64())
+	}
+	seeds := []uint64{0, 1, 0xffffffffffffffff, 0x0123456789abcdef}
+	for n := 0; n <= 300; n++ {
+		for off := 0; off < 8; off++ { // unaligned starts
+			b := buf[off : off+n]
+			for _, seed := range seeds {
+				want := refHash64(b, seed)
+				if got := Hash64(b, seed); got != want {
+					t.Fatalf("Hash64(len=%d off=%d seed=%#x) = %#x, want %#x", n, off, seed, got, want)
+				}
+				if got := Hash64Str(string(b), seed); got != want {
+					t.Fatalf("Hash64Str(len=%d off=%d seed=%#x) = %#x, want %#x", n, off, seed, got, want)
+				}
+			}
+		}
+	}
+	for range 20000 {
+		n := rng.IntN(4096)
+		b := buf[:n]
+		seed := rng.Uint64()
+		if got, want := Hash64(b, seed), refHash64(b, seed); got != want {
+			t.Fatalf("Hash64(len=%d seed=%#x) = %#x, want %#x", n, seed, got, want)
+		}
+	}
+}
+
+func BenchmarkHash64Ref(b *testing.B) {
+	for _, n := range []int{8, 31, 64, 1024} {
+		buf := make([]byte, n)
+		b.Run(strconv.Itoa(n), func(b *testing.B) {
+			b.SetBytes(int64(n))
+			for b.Loop() {
+				refHash64(buf, 0)
+			}
+		})
+	}
+}
+
+func BenchmarkHash64Asm(b *testing.B) {
+	for _, n := range []int{8, 31, 64, 1024} {
+		buf := make([]byte, n)
+		b.Run(strconv.Itoa(n), func(b *testing.B) {
+			b.SetBytes(int64(n))
+			for b.Loop() {
+				Hash64(buf, 0)
+			}
+		})
+	}
 }
